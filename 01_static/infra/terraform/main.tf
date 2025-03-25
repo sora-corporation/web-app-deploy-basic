@@ -50,9 +50,9 @@ module "webapp" {
     aws          = aws
     aws.virginia = aws.virginia
   }
-  region                = var.region
-  project               = var.project
-  environment           = var.environment
+  region      = var.region
+  project     = var.project
+  environment = var.environment
 
   domain_name           = var.domain_name
   whitelist_cidr_blocks = var.whitelist_cidr_blocks

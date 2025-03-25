@@ -148,7 +148,7 @@ flowchart LR
         E[SSL: ACM]
     end
     
-    subgraph AA[Amazon Route53などのDNS]
+    subgraph Amazon Route53などのDNS
         F[ドメイン: xxx.xyz]
         G[CNAMEレコードまたはAレコードでAlias: ロードバランサーの内部ドメイン]
     end
@@ -190,4 +190,74 @@ Host wadb.app
   ServerAliveInterval 30
   IdentityFile ~/.ssh/[SSH秘密鍵]
   ProxyCommand ssh -CW %h:%p wadb.bastion
+```
+
+## サンプルアプリをS3バケット + CDNで公開する
+
+- S3バケットを作成し、サンプルアプリをビルドしたファイルをアップロード
+- CloudFront(CDN)を配置し、originをS3バケットに設定
+- SSL証明書はAWS Certificate Manager(ACM)で作成し、CloudFrontに紐づけ
+- CloudFrontのドメインをRoute53(DNS)に設定
+
+```mermaid
+flowchart LR
+    A[User's Browser] -->|HTTPSリクエスト| B
+    E -->|Webページ| A
+    
+    subgraph AWSネットワーク
+        B[ドメイン: xxx.xyz]
+        C[CNAMEレコードまたはAレコードでAlias: CloudFrontのドメイン]
+        D[SSL: ACM]
+        E[CDN: CloudFront]
+        F[ストレージ: S3]
+    end
+    D --> E
+    B --> E
+    E --> F
+```
+
+### 手順
+
+1. AWSリソースをTerraformを使って構築する。実行手順詳細は [README](./infra/terraform/README.md) を参照。
+1. ローカルでビルドしたサンプルアプリをS3バケットにアップロード
+    - `https://cdn.[ドメイン名]` にアクセスし、HTTPSでサンプルアプリケーションが表示されることを確認する
+
+## サンプルアプリをAmplifyで公開する
+
+- Amplifyプロジェクトを作成
+    - IaC, CI/CDが一体化されているため、GitHubプロジェクトを紐づければ自動的に構築される
+    - アプリケーションを更新する場合も、GitHubのリポジトリにPushすれば自動的に更新される
+- AmplifyのドメインをRoute53(DNS)に設定
+- 構成図としてはS3 + CloudFrontと同じだが、Amplifyの裏側にあり直接リソースを参照することはできない
+
+### 手順
+
+1. AWS管理コンソールからAmplifyの新規プロジェクトを作成
+    - GitHubプロジェクトを選択するとコードを読み取って構成が提案されるので、基本的にそれに従っておけば良い
+    - `amplify.yml` は下記のように設定
+1. ドメインの設定
+    - Amplifyプロジェクトの設定 > ホスティング > カスタムドメイン > ドメインの追加 からおこなう
+    - DNSにRoute53を利用していると、SSL証明書の設定までこの中で完結することができる
+1. ローカルでビルドしたサンプルアプリをS3バケットにアップロード
+    - `https://amplify.[ドメイン名]` にアクセスし、HTTPSでサンプルアプリケーションが表示されることを確認する
+
+#### amplify.yml
+
+```yml
+version: 1
+frontend:
+    phases:
+        build:
+            commands:
+                - cd 01_static/sample-app
+                - nvm install 22
+                - nvm use 22
+                - npm i
+                - npm run build
+    artifacts:
+        baseDirectory: '01_static/sample-app/out'
+        files:
+            - '**/*'
+    cache:
+        paths: []
 ```
