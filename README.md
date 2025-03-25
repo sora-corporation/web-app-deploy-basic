@@ -16,7 +16,7 @@
 ## 準備
 
 1. [mise](https://github.com/jdx/mise) のインストールとセットアップ
-1. 以下のコマンドで、プロジェクトを進めるにあたり必要なツールをインストールする。
+1. 以下のコマンドで、プロジェクトを進めるにあたり必要なツールをインストールする
 
 ```bash
 git clone git@github.com:sora-corporation/web-app-deploy-basic.git
