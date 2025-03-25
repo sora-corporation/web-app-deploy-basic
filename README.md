@@ -23,3 +23,7 @@ git clone git@github.com:sora-corporation/web-app-deploy-basic.git
 cd web-app-deploy-basic
 mise install
 ```
+
+## 詳細
+
+- [DAY 1](./01_static/README.md)
