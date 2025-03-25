@@ -3,7 +3,7 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
-    "start": "next start"
+    "start": "npx serve@latest out"
   },
   "dependencies": {
     "classnames": "^2.5.1",

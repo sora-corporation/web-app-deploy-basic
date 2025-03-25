@@ -1,3 +1,5 @@
+'use client';
+
 import cn from "classnames";
 import Link from "next/link";
 import Image from "next/image";
@@ -11,6 +13,7 @@ type Props = {
 const CoverImage = ({ title, src, slug }: Props) => {
   const image = (
     <Image
+      loader={({ src }) => src}
       src={src}
       alt={`Cover Image for ${title}`}
       className={cn("shadow-sm w-full", {
