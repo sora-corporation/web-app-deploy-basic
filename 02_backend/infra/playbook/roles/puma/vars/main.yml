@@ -1,0 +1,2 @@
+---
+puma_command: /home/ubuntu/.rbenv/bin/rbenv exec bundle exec puma

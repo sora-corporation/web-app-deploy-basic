@@ -1,0 +1,26 @@
+---
+- name: Copy logrotate configuration
+  template:
+    src: logrotate.j2
+    dest: /etc/logrotate.d/puma
+    owner: root
+    group: root
+    mode: 644
+
+- name: Copy systemd configuration
+  template:
+    src: puma.service.j2
+    dest: /etc/systemd/system/puma.service
+    owner: root
+    group: root
+    mode: 644
+
+- name: Reload systemd
+  systemd_service:
+    daemon_reload: true
+
+- name: Start puma and autostart enable
+  systemd_service:
+    name: puma
+    state: started
+    enabled: true

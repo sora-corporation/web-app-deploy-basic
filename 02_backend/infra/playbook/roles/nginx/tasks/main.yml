@@ -1,0 +1,65 @@
+---
+- name: Install Nginx
+  package:
+    name: nginx
+    state: latest
+
+- name: Create folder for default source
+  file:
+    path: "{{base_dir}}/{{item}}"
+    state: directory
+    owner: "{{deployer}}"
+    group: "{{deployer}}"
+    mode: 0744
+  with_items:
+    - default
+    - log
+
+- name: Copy nginx.conf
+  template:
+    src: nginx.conf.j2
+    dest: /etc/nginx/nginx.conf
+    mode: 0644
+
+- name: Copy upstream configurations
+  template:
+    src: upstream.conf.j2
+    dest: /etc/nginx/conf.d/upstream.conf
+    mode: 0644
+
+- name: Copy custom configurations
+  template:
+    src: default.j2
+    dest: "/etc/nginx/sites-available/{{site_name}}"
+    mode: 0644
+
+- name: Create folder for releasing
+  file:
+    path: "{{base_dir}}/{{app_name}}/releases/1/public"
+    state: directory
+    owner: "{{deployer}}"
+    group: "{{deployer}}"
+    mode: 0755
+
+- name: Create folder for publishing
+  file:
+    src: "{{base_dir}}/{{app_name}}/releases/1"
+    dest: "{{base_dir}}/{{app_name}}/current"
+    state: link
+
+- name: Create symlink of site configuration
+  file:
+    src: "/etc/nginx/sites-available/{{site_name}}"
+    dest: "/etc/nginx/sites-enabled/{{site_name}}"
+    state: link
+
+- name: Be sure nginx is running and enable
+  service:
+    name: nginx
+    state: started
+    enabled: true
+
+- name: Restart nginx
+  service:
+    name: nginx
+    state: restarted

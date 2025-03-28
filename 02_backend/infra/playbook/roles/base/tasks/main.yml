@@ -1,0 +1,66 @@
+---
+- name: Update and upgrade apt packages
+  become: true
+  apt:
+    upgrade: yes
+    update_cache: yes
+
+- name: Set timezone to Asia/Tokyo
+  community.general.timezone:
+    name: Asia/Tokyo
+
+- name: Set swapfile to fact
+  set_fact:
+    swap_file_path: /swapfile
+
+- name: Create swapfile
+  command: dd if=/dev/zero of={{swap_file_path}} bs=1M count=1024 creates={{swap_file_path}}
+
+- name: Change swapfile permissions
+  file:
+    path: "{{swap_file_path}}"
+    owner: root
+    group: root
+    mode: 0600
+
+- name: Format swapfile
+  command: mkswap {{swap_file_path}} creates={{swap_file_path}}
+
+- name: Add swapfile for swapping
+  command: swapon {{swap_file_path}} creates={{swap_file_path}}
+
+- name: Add line to /etc/fstab for booting
+  mount:
+    name: swap
+    src: "{{swap_file_path}}"
+    fstype: swap
+    opts: defaults
+    passno: 0
+    dump: 0
+    state: present
+
+- name: Install packages
+  package:
+    name:
+      - ca-certificates
+      - apt-transport-https
+      - software-properties-common
+      - build-essential
+      - pkg-config
+      - autoconf
+      - git
+      - acl
+      - unzip
+      - postgresql-client
+      - libreadline-dev
+      - libcurl4-openssl-dev
+      - libyaml-dev
+      - libpq-dev
+      - zlib1g-dev
+    state: latest
+
+- name: Copy environment file
+  template:
+    src: environment.j2
+    dest: /etc/environment
+    mode: 0755

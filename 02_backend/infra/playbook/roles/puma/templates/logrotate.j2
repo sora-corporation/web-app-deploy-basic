@@ -1,0 +1,13 @@
+{{app_dir}}/shared/log/{{rails_env}}.log {
+    su {{deployer}} {{deployer}}
+    create 0664 {{deployer}} {{deployer}}
+    weekly
+    rotate 24
+    missingok
+    notifempty
+    compress
+
+    lastaction
+        sudo systemctl restart puma
+    endscript
+}

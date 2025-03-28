@@ -1,0 +1,96 @@
+---
+- name: Checkout rbenv_repo
+  git: >
+    repo={{ rbenv_repo }}
+    dest={{ rbenv_root }}
+    version={{ rbenv.version }}
+    accept_hostkey=true
+  with_items: "{{ deployer }}"
+  become: true
+  become_user: "{{ item }}"
+  ignore_errors: true
+
+- name: Create plugins directory
+  file:
+    state: directory
+    path: "{{ rbenv_root }}/plugins"
+  with_items: "{{ deployer }}"
+  become: true
+  become_user: "{{ item }}"
+  ignore_errors: true
+
+- name: Install plugins
+  git: >
+    repo={{ item[1].repo }}
+    dest={{ rbenv_root }}/plugins/{{ item[1].name }}
+    version={{ item[1].version }}
+    accept_hostkey=true
+  with_nested:
+    - "{{ deployer }}"
+    - "{{ rbenv_plugins }}"
+  become: true
+  become_user: "{{ item[0] }}"
+  ignore_errors: true
+
+- name: Add rbenv initialization to profile system-wide
+  template:
+    src: rbenv.sh.j2
+    dest: /etc/profile.d/rbenv.sh
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Set gemrc
+  copy:
+    src: gemrc
+    dest: ~/.gemrc
+  with_items: "{{ deployer }}"
+  become: true
+  become_user: "{{ item }}"
+  ignore_errors: true
+
+- name: Check ruby {{ rbenv.ruby_version }} installed
+  shell: $SHELL -lc "rbenv versions | grep {{ rbenv.ruby_version }}"
+  become: true
+  become_user: "{{ item }}"
+  with_items: "{{ deployer }}"
+  register: ruby_installed
+  ignore_errors: yes
+
+- name: Install ruby {{ rbenv.ruby_version }}
+  shell: $SHELL -lc "rbenv install {{ rbenv.ruby_version }}"
+  become: true
+  become_user: "{{ item[1] }}"
+  with_together:
+    - "{{ ruby_installed.results }}"
+    - "{{ deployer }}"
+  when: item[0].rc != 0
+  ignore_errors: true
+
+- name: Set ruby {{ rbenv.ruby_version }}
+  shell: $SHELL -lc "rbenv global {{ rbenv.ruby_version }} && rbenv rehash"
+  become: true
+  become_user: "{{ item[1] }}"
+  with_together:
+    - "{{ ruby_installed.results }}"
+    - "{{ deployer }}"
+  when: item[0].rc != 0
+  ignore_errors: true
+
+- name: Check bundler installed
+  shell: $SHELL -lc "rbenv exec gem list --local | grep bundler | grep '{{ rbenv.bundler_version }}'"
+  become: true
+  become_user: "{{ item }}"
+  with_items: "{{ deployer }}"
+  register: bundler_installed
+  ignore_errors: yes
+
+- name: Install bundler
+  shell: $SHELL -lc "rbenv exec gem install bundler -v {{ rbenv.bundler_version }}"
+  become: true
+  become_user: "{{ item[1] }}"
+  with_together:
+    - "{{ bundler_installed.results }}"
+    - "{{ deployer }}"
+  when: item[0].rc != 0
+  ignore_errors: true

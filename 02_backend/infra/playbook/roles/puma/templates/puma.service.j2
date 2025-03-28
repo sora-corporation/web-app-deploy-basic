@@ -1,0 +1,17 @@
+[Unit]
+Description=Puma HTTP Server
+After=network.target
+
+[Service]
+Type=simple
+User={{deployer}}
+WorkingDirectory={{app_dir}}/current
+StandardOutput=append:{{app_dir}}/current/log/{{rails_env}}.log
+StandardError=append:{{app_dir}}/current/log/{{rails_env}}.log
+
+EnvironmentFile=/etc/environment
+ExecStart={{puma_command}} -C {{app_dir}}/current/config/puma.rb
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

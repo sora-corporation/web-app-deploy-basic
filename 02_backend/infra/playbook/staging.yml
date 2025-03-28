@@ -1,0 +1,16 @@
+---
+- hosts: sites
+  become: yes
+  vars:
+    stage: development
+    app_name: sample-app
+    base_dir: /home/www
+    app_dir: "{{base_dir}}/{{app_name}}"
+    default_document_root: "{{base_dir}}/default"
+    deployer: ubuntu
+  roles:
+    # - base
+    # - nginx
+    # - rbenv
+    # - nodejs
+    - puma

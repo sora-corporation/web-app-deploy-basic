@@ -1,0 +1,17 @@
+---
+rbenv:
+  env: user
+  version: v1.3.0
+  ruby_version: 3.4.2
+  bundler_version: 2.6.2
+
+rbenv_repo: "https://github.com/sstephenson/rbenv.git"
+
+rbenv_plugins:
+  - {
+      name: "ruby-build",
+      repo: "https://github.com/sstephenson/ruby-build.git",
+      version: "v20250326",
+    }
+
+rbenv_root: "~/.rbenv"

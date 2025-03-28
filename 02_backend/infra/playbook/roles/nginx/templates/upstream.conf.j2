@@ -1,0 +1,3 @@
+upstream puma {
+  server unix:{{app_dir}}/current/tmp/sockets/puma.sock;
+}
