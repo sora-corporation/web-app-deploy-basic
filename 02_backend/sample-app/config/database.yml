@@ -80,19 +80,12 @@ test:
 # Read https://guides.rubyonrails.org/configuring.html#configuring-a-database
 # for a full overview on how database connection configuration can be specified.
 #
+staging:
+  <<: *default
+  database: sample_app
+  url: <%= ENV.fetch("DATABASE_URL") { nil } %>
+
 production:
-  primary: &primary_production
-   <<: *default
-   url: <%= ENV.fetch("DATABASE_URL") { nil } %>
-  cache:
-    <<: *primary_production
-    database: sample_app_production_cache
-    migrations_paths: db/cache_migrate
-  queue:
-    <<: *primary_production
-    database: sample_app_production_queue
-    migrations_paths: db/queue_migrate
-  cable:
-    <<: *primary_production
-    database: sample_app_production_cable
-    migrations_paths: db/cable_migrate
+  <<: *default
+  database: sample_app
+  url: <%= ENV.fetch("DATABASE_URL") { nil } %>
