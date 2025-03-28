@@ -1,0 +1,35 @@
+version: "3"
+
+services:
+  rails:
+    build:
+      context: .
+    command:  [ "./bin/thrust", "./bin/rails", "server", "-b", "0.0.0.0" ]
+    volumes:
+      - .:/rails
+      - storage-data:/rails/storage
+    ports:
+      - "3000:3000"
+    depends_on:
+      - pg
+    tty: true
+    stdin_open: true
+    environment:
+      DB_HOST: ${DB_HOST}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_USERNAME: ${DB_USERNAME}
+      RAILS_ENV: ${RAILS_ENV}
+      BUNDLE_WITHOUT: ${BUNDLE_WITHOUT}
+
+  pg:
+    image: "postgres:17"
+    environment:
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+    ports:
+       - "5432:5432"
+
+volumes:
+  pg-data:
+  storage-data:

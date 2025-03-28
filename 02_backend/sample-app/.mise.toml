@@ -1,0 +1,7 @@
+[env]
+DB_USERNAME = "postgres"
+DB_PASSWORD = "password"
+DB_HOST = "pg"
+RAILS_ENV = "development"
+BUNDLE_WITHOUT = "" # for development
+# BUNDLE_WITHOUT=development:test # for production

@@ -1,0 +1,10 @@
+source "https://rubygems.org"
+
+ruby "3.4.2"
+
+gem "capistrano-rails"
+gem "capistrano-rbenv"
+gem "capistrano-bundler"
+gem "capistrano3-puma", github: "seuros/capistrano-puma"
+gem "ed25519"
+gem "bcrypt_pbkdf"
