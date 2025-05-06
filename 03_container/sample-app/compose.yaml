@@ -1,0 +1,6 @@
+services:
+  app:
+    container_name: sample-app
+    build: .
+    ports:
+      - 80:3000

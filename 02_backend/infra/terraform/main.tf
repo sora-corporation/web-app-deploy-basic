@@ -13,7 +13,7 @@ terraform {
   }
 
   backend "s3" {
-    bucket  = "web-app-deploy-basic-terraform-state"
+    bucket  = "web-app-deploy-basic-day2-terraform-state"
     region  = "ap-northeast-1"
     key     = "web-app-deploy-basic.terraform.tfstate"
     encrypt = true
