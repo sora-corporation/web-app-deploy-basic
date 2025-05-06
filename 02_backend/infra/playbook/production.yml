@@ -10,11 +10,12 @@
     deployer: ubuntu
   roles:
     - base
-    - rbenv
-    - nodejs
+    # - rbenv
+    # - nodejs
 - hosts: web
   become: yes
   vars:
+    stage: production
     app_name: sample-app
     base_dir: /home/www
     app_dir: "{{base_dir}}/{{app_name}}"

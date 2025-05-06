@@ -25,3 +25,12 @@ cd infra/playbook
 # を hosts.staging というファイル名で保存
 ansible-playbook -i ./hosts.staging staging.yml
 ```
+
+## 本番環境
+
+```bash
+cd infra/playbook
+# https://github.com/sora-corporation/web-app-deploy-basic/wiki/hosts.production
+# を hosts.production というファイル名で保存
+ansible-playbook -i ./hosts.production production.yml
+```

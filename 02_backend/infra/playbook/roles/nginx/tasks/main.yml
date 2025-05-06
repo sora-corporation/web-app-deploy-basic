@@ -10,7 +10,7 @@
     state: directory
     owner: "{{deployer}}"
     group: "{{deployer}}"
-    mode: 0744
+    mode: 0755
   with_items:
     - default
     - log

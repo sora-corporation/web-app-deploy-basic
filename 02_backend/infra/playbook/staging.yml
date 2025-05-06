@@ -9,8 +9,8 @@
     default_document_root: "{{base_dir}}/default"
     deployer: ubuntu
   roles:
-    # - base
-    # - nginx
-    # - rbenv
-    # - nodejs
+    - base
+    - nginx
+    - rbenv
+    - nodejs
     - puma
