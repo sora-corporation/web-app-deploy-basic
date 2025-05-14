@@ -19,7 +19,6 @@ resource "aws_apprunner_service" "main" {
       image_configuration {
         port = 3000
         runtime_environment_variables = {
-          PORT     = "3000"
           NODE_ENV = "production"
         }
       }
@@ -58,10 +57,10 @@ resource "aws_route53_record" "certificate_validation_main" {
   ttl     = 300
 }
 
-resource "aws_route53_record" "main" {
+resource "aws_route53_record" "app" {
   zone_id = aws_route53_zone.root.zone_id
 
-  name    = aws_apprunner_custom_domain_association.main.domain_name
+  name    = "app.${var.domain_name}"
   type    = "CNAME"
   records = [aws_apprunner_service.main.service_url]
   ttl     = 300
